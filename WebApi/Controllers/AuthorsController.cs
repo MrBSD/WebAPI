@@ -23,5 +23,17 @@ namespace WebApi.Controllers
             var authors = _repository.GetAllAuthors();
             return Ok(authors);
         }
+
+        [HttpGet("{id}")]
+        public IActionResult GetAuthor(Guid id)
+        {
+            var author = _repository.GetAuthor(id);
+
+            if (author == null)
+                return NotFound();
+
+            return Ok(author);
+        }
+
     }
 }

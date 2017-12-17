@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace Core.Entities
@@ -15,7 +16,7 @@ namespace Core.Entities
 
         public Author()
         {
-            Books = new ICollection<Book>();
+            Books = new List<Book>();
         }
     }
 }

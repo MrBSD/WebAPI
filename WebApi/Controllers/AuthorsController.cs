@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Core.Dto;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +13,12 @@ namespace WebApi.Controllers
     public class AuthorsController : Controller
     {
         private readonly IAuthorsRepository _repository;
+        private readonly IMapper _mapper;
 
-        public AuthorsController(IAuthorsRepository repository)
+        public AuthorsController(IAuthorsRepository repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -32,7 +36,7 @@ namespace WebApi.Controllers
             if (author == null)
                 return NotFound();
 
-            return Ok(author);
+            return Ok(_mapper.Map<AuthorDto>(author));
         }
 
     }

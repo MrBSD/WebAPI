@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Core.Dto;
 using Core.Entities;
-using AuthorForUpdateDto = WebApi.Controllers.AuthorForUpdateDto;
 
 namespace WebApi.Mapping
 {

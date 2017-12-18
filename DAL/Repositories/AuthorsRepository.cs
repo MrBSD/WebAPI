@@ -76,7 +76,7 @@ namespace DAL.Repositories
                 var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    Map(reader, author);
+                   Map(reader, author);
                 }
                 connection.Close();
             }

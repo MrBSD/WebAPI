@@ -7,6 +7,7 @@ using Core.Dto;
 using Core.Entities;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Helpers;
 
 namespace WebApi.Controllers
 {
@@ -25,6 +26,16 @@ namespace WebApi.Controllers
         [HttpPost]
         public IActionResult CreateAuthor([FromBody] AuthorForCreateDto authorForCreateDto)
         {
+            if (authorForCreateDto == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return new UnprocessableEntityObjectResult(ModelState);
+            }
+
             var author = _mapper.Map<Author>(authorForCreateDto);
             var createdAuthor = _repository.AddAuthor(author);
             var authorToReturn = _mapper.Map<AuthorDto>(createdAuthor);
@@ -44,12 +55,12 @@ namespace WebApi.Controllers
         [HttpGet("{id}", Name = "GetAuthor")]
         public IActionResult GetAuthor(Guid id)
         {
-            var author = _repository.GetAuthor(id);
-
-            if (author == null)
-                return NotFound();
+           var author = _repository.GetAuthor(id);
+           if (author == null)
+               return NotFound();
 
             return Ok(_mapper.Map<AuthorDto>(author));
+           
         }
 
         [HttpDelete("{id}")]
@@ -62,6 +73,17 @@ namespace WebApi.Controllers
         [HttpPut("{id}")]
         public IActionResult UpdateAuthor(Guid id, [FromBody]AuthorForUpdateDto authorForUpdateDto)
         {
+
+            if (authorForUpdateDto==null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return new UnprocessableEntityObjectResult(ModelState);
+            }
+
             var authorInDb = _repository.GetAuthor(id);
             if (authorInDb==null)
             {

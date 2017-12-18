@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Core.Dto;
 using Core.Entities;
+using AuthorForUpdateDto = WebApi.Controllers.AuthorForUpdateDto;
 
 namespace WebApi.Mapping
 {
@@ -16,6 +17,10 @@ namespace WebApi.Mapping
             //Domain to Dto
             CreateMap<Author, AuthorDto>()
                 .ForMember(a => a.Name, opt => opt.MapFrom(src=>$"{src.FirstName} {src.LastName}"));
+
+            //Dto to Domain
+            CreateMap<AuthorForUpdateDto, Author>();
+            CreateMap<AuthorForCreateDto, Author>();
         }
     }
 }

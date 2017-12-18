@@ -10,19 +10,38 @@ namespace DAL.Repositories
 {
     public class AuthorsRepository: IAuthorsRepository
     {
-
-        
-        private readonly string _connectionString= "server=DESKTOP-D7JUM7C; database=LibraryDB; Integrated Security=True";
-        public ICollection<Author> Authors { get; set; }
+        private readonly string _connectionString = "server=DESKTOP-D7JUM7C; database=LibraryDB; Integrated Security=True";
+      
 
         public AuthorsRepository()
         {
-            Authors = new List<Author>();
+           
         }
 
+        public Author AddAuthor(Author author)
+        {
+            author.Id = Guid.NewGuid();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var cmd = connection.CreateCommand();
+                cmd.CommandText = @"spAddAuthor";
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@authorId", author.Id);
+                cmd.Parameters.AddWithValue("@firstName", author.FirstName);
+                cmd.Parameters.AddWithValue("@lastName", author.LastName);
+                cmd.Parameters.AddWithValue("@genre", author.Genre);
+                cmd.Parameters.AddWithValue("@dateOfBirth", author.DateOfBirth);
+
+                connection.Open();
+                cmd.ExecuteNonQuery();
+                connection.Close();
+            }
+            return author;
+        }
 
         public IEnumerable<Author> GetAllAuthors()
         {
+            var authors = new List<Author>();
             using (var connection = new SqlConnection(_connectionString))
             {
                 var cmd = connection.CreateCommand();
@@ -34,12 +53,12 @@ namespace DAL.Repositories
                     {
                         var author = new Author();
                         Map(reader, author);
-                        Authors.Add(author);
+                        authors.Add(author);
 
                     }
                 connection.Close();
             }
-            return Authors;
+            return authors;
         }
 
         public Author GetAuthor(Guid authorId)
@@ -49,7 +68,8 @@ namespace DAL.Repositories
             using (var connection = new SqlConnection(_connectionString))
             {
                 var cmd = connection.CreateCommand();
-                cmd.CommandText = @"SELECT * FROM Authors WHERE Id=@authorId";
+                cmd.CommandText = @"spGetAuthor";
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@authorId", authorId);
 
                 connection.Open();
@@ -67,7 +87,41 @@ namespace DAL.Repositories
             return author;
         }
 
-        private Author Map(IDataRecord record, Author author)
+        public void DeleteAuthor(Guid authorId)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var cmd = connection.CreateCommand();
+                cmd.CommandText = @"spDeleteAuthor";
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@authorId", authorId);
+
+                connection.Open();
+                cmd.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+
+        public void UpdateAuthor(Author author)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var cmd = connection.CreateCommand();
+                cmd.CommandText = @"spUpdateAuthor";
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@authorId", author.Id);
+                cmd.Parameters.AddWithValue("@firstName", author.FirstName);
+                cmd.Parameters.AddWithValue("@lastName", author.LastName);
+                cmd.Parameters.AddWithValue("@genre", author.Genre);
+                cmd.Parameters.AddWithValue("@dateOfBirth", author.DateOfBirth);
+
+                connection.Open();
+                cmd.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+
+        private static Author Map(IDataRecord record, Author author)
         {
             author.Id = Guid.Parse(record["Id"].ToString());
             author.FirstName = record["FirstName"].ToString();

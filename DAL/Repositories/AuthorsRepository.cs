@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Core.Entities;
 using Core.Interfaces;
 using System.Data;
-using System.Data.SqlClient;
-using System.Configuration;
 
 namespace DAL.Repositories
 {
